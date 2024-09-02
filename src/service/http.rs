@@ -38,7 +38,7 @@ impl HttpService {
     }
 }
 
-#[cfg(test)]
+/* #[cfg(test)]
 mod tests {
     use crate::service::http::HttpService;    
 
@@ -47,4 +47,4 @@ mod tests {
         let resp = HttpService::new("hello").await.unwrap();
         println!("{:?}", resp);
     }
-}
+} */

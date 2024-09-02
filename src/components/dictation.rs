@@ -4,6 +4,7 @@ use web_sys::{DragEvent, Event, FileList, HtmlInputElement};
 use gloo::timers::callback::Interval;
 use gloo::file::callbacks::FileReader;
 use gloo::file::File;
+use regex::Regex;
 use std::collections::HashMap;
 
 //use gloo::console::{self, Timer};
@@ -107,17 +108,19 @@ impl Component for Dictation{
         match msg {
             Msg::CreateWordListFromFile => {
                 let mut total_string = "".to_string();
-                log::debug!("{:#?}", self.files);
+                //log::debug!("{:#?}", self.files);
                 self.files.iter().for_each(|file| {
                      total_string.push_str((file.data.clone() + "\r\n").as_str());
                 });
                 log::debug!("{:#?}", total_string);
-                self.wordlist= total_string
+                let re = Regex::new(r"\r\n|\n").unwrap();
+                self.wordlist = re.split(total_string.trim()).map(String::from).collect::<Vec<_>>();
+                /* self.wordlist= total_string
                     .trim()
                     .split("\r\n")
                     .map(String::from)
-                    .collect::<Vec<_>>(); 
-                //log::debug!("{:#?}", self.wordlist);
+                    .collect::<Vec<_>>();  */
+                log::debug!("{:#?}", self.wordlist);
                 self.status = Status::Ready;
 
                 true
@@ -186,21 +189,21 @@ impl Component for Dictation{
             Msg::PlaySound(number) => {  
                 let link = ctx.link().clone();
                 let wordlist_len = self.wordlist.len();
-                self.currentnumber = number/2+1;
+                self.currentnumber = number/self.para.para_number+1;
                 if number == wordlist_len * self.para.para_number   {                    
                     link.send_message(Msg::Finished); 
                     return false;
                 }; 
-                //log::info!("number in Msg::PlaySound:{}",number/self.para.para_number+1);                 
-                //log::info!("play sound of {} word:{}",number/self.para.para_number+1,self.wordlist[number/self.para.para_number]);   
-                self.progress_pct = (number+1) as f32 / (wordlist_len*2) as f32 * 100.0;               
-                let url = format!("http://dict.youdao.com/dictvoice?audio={}&type={}",self.wordlist[number/self.para.para_number],self.para.para_accent);
+                log::info!("number in Msg::PlaySound:{}",number/self.para.para_number+1);                 
+                log::info!("play sound of {} word:{}",number/self.para.para_number+1,self.wordlist[number/self.para.para_number]);   
+                self.progress_pct = (number+1) as f32 / (wordlist_len*self.para.para_number) as f32 * 100.0;               
+                let url = format!("https://dict.youdao.com/dictvoice?audio={}&type={}",self.wordlist[number/self.para.para_number],self.para.para_accent);
                 self.dictations = 
                 html! {
                         <p key= {number}><audio id="audio" autoplay=true src={url.clone()}></audio> </p>
                 }; 
 
-                log::info!("url:{:#?}",format!("<audio id=\"audio\" autoplay=true src={}></audio>",url.clone())); 
+                //log::info!("url:{:#?}",format!("<audio id=\"audio\" autoplay=true src={}></audio>",url.clone())); 
                 
                 self.status = Status::Dictating;                         
                 true
@@ -267,7 +270,7 @@ impl Component for Dictation{
                     //log::debug!("iter Status for preview content: {:#?}", self.preview_content);
                 });
 
-                log::debug!("Status for preview content: {:#?}", self.preview_content);
+                //log::debug!("Status for preview content: {:#?}", self.preview_content);
                 true
             },
         }

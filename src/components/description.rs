@@ -12,7 +12,7 @@ pub fn Description() -> Html {
     
             <div class="container">
                 <div class="notification is-primary is-size-6" >
-                    {"可以通过自行输入或从文本导入需要听写的英语单词。输入时每行写一个单词，一行一个单词。从文本导入的单词也遵循同样的格式。"}<br />
+                    {"可以通过自行输入或从文本导入需要听写的英语单词。输入时每行写一个单词。从文本导入的单词也遵循同样的格式。"}<br />
                     {"输入示例:"}<br />
                     {"hello"}<br />
                     {"world"}<br />

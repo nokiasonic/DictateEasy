@@ -10,6 +10,7 @@ chrono = { version = "0.4", features =["js-sys", "wasmbind"] }
 gloo = "0.11.0"
 js-sys = "0.3"
 log = "0.4.22"
+regex = "1.10.6"
 reqwest = { version ="0.11.14", features = ["json"]}
 #tokio = {version = "1.38.0", features = ["full"]}
 wasm-bindgen = { version = "0.2.93", features = ["serde-serialize"] }
